@@ -15,9 +15,14 @@ export const LoginPage: React.FC = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    console.log('Tentando login com:', { username, password });
     const result = await dispatch(login({ username, password }));
+    console.log('Resultado do login:', result);
     if (login.fulfilled.match(result)) {
+      console.log('Login bem-sucedido, redirecionando...');
       navigate('/');
+    } else {
+      console.error('Erro no login:', result);
     }
   };
 
@@ -39,8 +44,7 @@ export const LoginPage: React.FC = () => {
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            required
-            placeholder="Digite seu usuário"
+            placeholder="Digite seu usuário (opcional)"
           />
           
           <Input
@@ -48,8 +52,7 @@ export const LoginPage: React.FC = () => {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            required
-            placeholder="Digite sua senha"
+            placeholder="Digite sua senha (opcional)"
           />
 
           <Button
@@ -64,6 +67,7 @@ export const LoginPage: React.FC = () => {
 
         <div className="mt-4 text-sm text-gray-600 text-center">
           <p>Sistema de Registro Público de Pets - Estado de Mato Grosso</p>
+          <p className="mt-2 text-xs text-gray-500">Dica: Teste com qualquer usuário/senha ou deixe em branco</p>
         </div>
       </div>
     </div>
