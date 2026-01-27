@@ -19,10 +19,6 @@ const initialState: AuthState = {
   error: null,
 };
 
-console.log('=== AUTH SLICE INITIAL STATE ===');
-console.log('Token no localStorage:', localStorage.getItem('token'));
-console.log('isAuthenticated inicial:', initialState.isAuthenticated);
-
 export const login = createAsyncThunk(
   'auth/login',
   async (credentials: LoginCredentials, { rejectWithValue }) => {
@@ -69,20 +65,16 @@ const authSlice = createSlice({
     builder
       // Login
       .addCase(login.pending, (state) => {
-        console.log('authSlice - login.pending');
         state.loading = true;
         state.error = null;
       })
       .addCase(login.fulfilled, (state, action: PayloadAction<AuthResponse>) => {
-        console.log('authSlice - login.fulfilled', action.payload);
         state.loading = false;
         state.isAuthenticated = true;
         state.token = action.payload.token;
         state.refreshToken = action.payload.refreshToken;
-        console.log('authSlice - isAuthenticated:', state.isAuthenticated);
       })
       .addCase(login.rejected, (state, action) => {
-        console.log('authSlice - login.rejected', action.payload);
         state.loading = false;
         state.error = action.payload as string;
       })
@@ -101,3 +93,4 @@ const authSlice = createSlice({
 
 export const { logout, clearError } = authSlice.actions;
 export default authSlice.reducer;
+

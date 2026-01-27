@@ -7,27 +7,17 @@ import { Input } from '../components/Input';
 import { Button } from '../components/Button';
 
 export const LoginPage: React.FC = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('admin');
+  const [password, setPassword] = useState('admin');
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { loading, error } = useAppSelector((state) => state.auth);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    console.log('=== INICIANDO LOGIN ===');
-    console.log('Tentando login com:', { username, password });
-    
     const result = await dispatch(login({ username, password }));
-    console.log('Resultado do login:', result);
-    
     if (login.fulfilled.match(result)) {
-      console.log('✅ Login bem-sucedido!');
-      console.log('Token salvo:', localStorage.getItem('token'));
-      console.log('Redirecionando para /...');
       navigate('/', { replace: true });
-    } else {
-      console.error('❌ Erro no login:', result);
     }
   };
 
@@ -49,7 +39,8 @@ export const LoginPage: React.FC = () => {
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            placeholder="Digite seu usuário (opcional)"
+            required
+            placeholder="admin"
           />
           
           <Input
@@ -57,7 +48,8 @@ export const LoginPage: React.FC = () => {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Digite sua senha (opcional)"
+            required
+            placeholder="admin"
           />
 
           <Button
@@ -72,7 +64,7 @@ export const LoginPage: React.FC = () => {
 
         <div className="mt-4 text-sm text-gray-600 text-center">
           <p>Sistema de Registro Público de Pets - Estado de Mato Grosso</p>
-          <p className="mt-2 text-xs text-gray-500">Dica: Teste com qualquer usuário/senha ou deixe em branco</p>
+          <p className="mt-2 text-xs text-blue-600">Usuário: admin | Senha: admin</p>
         </div>
       </div>
     </div>

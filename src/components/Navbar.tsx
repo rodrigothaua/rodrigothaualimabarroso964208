@@ -1,8 +1,22 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { logout } from '../store/authSlice';
 
 export const Navbar: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/login');
+  };
+
+  if (!isAuthenticated || location.pathname === '/login') {
+    return null;
+  }
 
   return (
     <nav className="bg-blue-600 text-white shadow-lg">
@@ -31,6 +45,12 @@ export const Navbar: React.FC = () => {
               </Link>
             </div>
           </div>
+          <button
+            onClick={handleLogout}
+            className="bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded-md"
+          >
+            Sair
+          </button>
         </div>
       </div>
     </nav>
