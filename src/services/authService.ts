@@ -3,16 +3,20 @@ import type { AuthResponse, LoginCredentials } from '../types';
 
 export const authService = {
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
+    console.log('authService.login - iniciando com:', credentials);
     try {
       const response = await apiClient.post<AuthResponse>('/autenticacao/login', credentials);
+      console.log('authService.login - sucesso da API:', response.data);
       return response.data;
     } catch (error: any) {
       // Modo demonstração: se a API falhar, gerar token fake para testes
       console.warn('API de login falhou, usando modo demonstração:', error.message);
-      return {
+      const demoResponse = {
         token: 'demo-token-' + Date.now(),
         refreshToken: 'demo-refresh-' + Date.now(),
       };
+      console.log('authService.login - retornando token demo:', demoResponse);
+      return demoResponse;
     }
   },
 

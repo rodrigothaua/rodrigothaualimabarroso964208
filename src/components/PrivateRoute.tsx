@@ -8,6 +8,9 @@ interface PrivateRouteProps {
 
 export const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
+  
+  console.log('PrivateRoute - isAuthenticated:', isAuthenticated);
+  console.log('PrivateRoute - token no localStorage:', localStorage.getItem('token'));
 
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
 };

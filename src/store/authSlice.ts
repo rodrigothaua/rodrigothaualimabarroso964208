@@ -65,16 +65,20 @@ const authSlice = createSlice({
     builder
       // Login
       .addCase(login.pending, (state) => {
+        console.log('authSlice - login.pending');
         state.loading = true;
         state.error = null;
       })
       .addCase(login.fulfilled, (state, action: PayloadAction<AuthResponse>) => {
+        console.log('authSlice - login.fulfilled', action.payload);
         state.loading = false;
         state.isAuthenticated = true;
         state.token = action.payload.token;
         state.refreshToken = action.payload.refreshToken;
+        console.log('authSlice - isAuthenticated:', state.isAuthenticated);
       })
       .addCase(login.rejected, (state, action) => {
+        console.log('authSlice - login.rejected', action.payload);
         state.loading = false;
         state.error = action.payload as string;
       })
