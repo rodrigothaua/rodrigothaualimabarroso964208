@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
@@ -11,7 +11,15 @@ export const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { loading, error } = useAppSelector((state) => state.auth);
+  const { loading, error, isAuthenticated } = useAppSelector((state) => state.auth);
+
+  // Redirecionar se já estiver autenticado
+  useEffect(() => {
+    if (isAuthenticated || localStorage.getItem('token')) {
+      console.log('Já autenticado, redirecionando...');
+      navigate('/', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -20,7 +28,10 @@ export const LoginPage: React.FC = () => {
     console.log('Resultado do login:', result);
     if (login.fulfilled.match(result)) {
       console.log('Login bem-sucedido, redirecionando...');
-      navigate('/');
+      // Pequeno delay para garantir que o estado foi atualizado
+      setTimeout(() => {
+        navigate('/', { replace: true });
+      }, 100);
     } else {
       console.error('Erro no login:', result);
     }

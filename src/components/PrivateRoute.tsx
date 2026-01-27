@@ -8,9 +8,14 @@ interface PrivateRouteProps {
 
 export const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const hasToken = !!localStorage.getItem('token');
+  
+  // Verifica tanto o Redux quanto o localStorage
+  const authenticated = isAuthenticated || hasToken;
   
   console.log('PrivateRoute - isAuthenticated:', isAuthenticated);
-  console.log('PrivateRoute - token no localStorage:', localStorage.getItem('token'));
+  console.log('PrivateRoute - hasToken:', hasToken);
+  console.log('PrivateRoute - authenticated:', authenticated);
 
-  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
+  return authenticated ? <>{children}</> : <Navigate to="/login" replace />;
 };
