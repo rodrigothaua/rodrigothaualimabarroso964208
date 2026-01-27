@@ -13,9 +13,16 @@ export const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   // Verifica tanto o Redux quanto o localStorage
   const authenticated = isAuthenticated || hasToken;
   
-  console.log('PrivateRoute - isAuthenticated:', isAuthenticated);
-  console.log('PrivateRoute - hasToken:', hasToken);
-  console.log('PrivateRoute - authenticated:', authenticated);
+  console.log('=== PRIVATE ROUTE CHECK ===');
+  console.log('Redux isAuthenticated:', isAuthenticated);
+  console.log('localStorage hasToken:', hasToken);
+  console.log('RESULTADO authenticated:', authenticated);
+  
+  if (!authenticated) {
+    console.log('❌ NÃO autenticado - Redirecionando para /login');
+  } else {
+    console.log('✅ Autenticado - Permitindo acesso');
+  }
 
   return authenticated ? <>{children}</> : <Navigate to="/login" replace />;
 };

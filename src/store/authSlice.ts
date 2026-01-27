@@ -19,6 +19,10 @@ const initialState: AuthState = {
   error: null,
 };
 
+console.log('=== AUTH SLICE INITIAL STATE ===');
+console.log('Token no localStorage:', localStorage.getItem('token'));
+console.log('isAuthenticated inicial:', initialState.isAuthenticated);
+
 export const login = createAsyncThunk(
   'auth/login',
   async (credentials: LoginCredentials, { rejectWithValue }) => {
