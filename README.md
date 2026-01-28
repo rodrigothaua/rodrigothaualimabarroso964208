@@ -1,17 +1,96 @@
 # Pet Manager MT - Sistema de Registro de Pets e Tutores
 
-## 📋 Dados do Candidato
+## Dados do Candidato
 
-- **Nome:** Rodrigo Thaualima Barroso
-- **ID:** rodrigothaualimabarroso964208
-- **Vaga:** Desenvolvedor Full Stack
+- **Nome:** Rodrigo Thauã Lima Barroso
+- **CPF:** 964.208.982-34
+- **Vaga:** Engenheiro da Computação Sênior
+- **ID do Repositório:** rodrigothaualimabarroso964208
 - **Data:** Janeiro 2026
 
-## 🎯 Descrição do Projeto
+## Descrição do Projeto
 
 Sistema web para gerenciamento de registro público de Pets e Tutores desenvolvido para o Estado de Mato Grosso. O projeto consome a API pública disponibilizada e implementa todas as funcionalidades CRUD necessárias com interface moderna e responsiva.
 
-## 🏗️ Arquitetura
+## Arquitetura do Sistema
+
+```
+src/
+├── components/              # Componentes Reutilizáveis (UI Layer)
+│   ├── Button.tsx          # Componente de botão com variantes
+│   ├── Card.tsx            # Componente de card clicável
+│   ├── ConfirmDialog.tsx   # Modal de confirmação
+│   ├── Input.tsx           # Input com label e validação
+│   ├── Loading.tsx         # Indicador de carregamento
+│   ├── Navbar.tsx          # Barra de navegação
+│   ├── Pagination.tsx      # Componente de paginação
+│   ├── PrivateRoute.tsx    # HOC para proteção de rotas
+│   └── Toast.tsx           # Notificações temporárias
+│
+├── pages/                  # Páginas da Aplicação (View Layer)
+│   ├── LoginPage.tsx       # Autenticação de usuário
+│   ├── PetsListPage.tsx    # Listagem paginada de pets
+│   ├── PetDetailPage.tsx   # Detalhes completos do pet
+│   ├── PetFormPage.tsx     # Cadastro/edição de pet
+│   ├── TutoresListPage.tsx # Listagem paginada de tutores
+│   ├── TutorDetailPage.tsx # Detalhes completos do tutor
+│   └── TutorFormPage.tsx   # Cadastro/edição de tutor
+│
+├── services/               # Camada de Serviços (Facade Pattern)
+│   ├── api.ts             # Cliente HTTP com interceptors
+│   ├── authService.ts     # Serviços de autenticação
+│   ├── petService.ts      # Serviços CRUD de pets
+│   └── tutorService.ts    # Serviços CRUD de tutores
+│
+├── store/                  # Gerenciamento de Estado (Redux Toolkit)
+│   ├── index.ts           # Configuração da store
+│   ├── hooks.ts           # Hooks tipados (useAppDispatch, useAppSelector)
+│   ├── authSlice.ts       # Estado de autenticação
+│   ├── petSlice.ts        # Estado de pets e paginação
+│   └── tutorSlice.ts      # Estado de tutores e paginação
+│
+├── hooks/                  # Custom Hooks
+│   └── useToast.ts        # Hook para gerenciar toasts
+│
+├── types/                  # Definições TypeScript
+│   └── index.ts           # Interfaces e tipos compartilhados
+│
+├── test/                   # Testes Automatizados
+│   ├── setup.ts           # Configuração do Vitest
+│   ├── components/        # Testes de componentes
+│   ├── services/          # Testes de serviços
+│   ├── store/             # Testes de Redux slices
+│   └── hooks/             # Testes de hooks
+│
+├── App.tsx                 # Componente raiz com rotas
+└── main.tsx               # Entry point da aplicaçãoync (page, size, nome) => {
+    const response = await apiClient.get('/v1/pets', { params });
+    return response.data;
+  }
+};
+
+// Camada de Estado (Redux)
+export const fetchPets = createAsyncThunk(
+  'pets/fetchAll',
+  async (params) => await petService.getAll(params)
+);
+
+// Camada de Apresentação
+const pets = useAppSelector(state => state.pets.pets);
+```
+
+#### 3. Component-Based Architecture
+- **Componentes Reutilizáveis**: Button, Input, Card, Loading, etc.
+- **Composição**: Componentes complexos compostos por componentes simples
+- **Props Tipadas**: TypeScript garante type safety
+- **Separation of Concerns**: Componentes de UI vs Páginas de negócio
+
+#### 4. Lazy Loading e Code Splitting
+- **React.lazy**: Carregamento sob demanda de páginas
+- **Suspense Boundaries**: Estados de carregamento durante lazy load
+- **Otimização de Bundle**: Redução do tamanho do bundle inicial
+
+## Arquitetura de Pastas
 
 ### Estrutura de Pastas
 
@@ -45,123 +124,342 @@ src/
 │   ├── petSlice.ts
 │   └── tutorSlice.ts
 ├── types/              # TypeScript interfaces
-│   └── index.ts
-├── test/               # Testes unitários
-│   ├── setup.ts
-│   ├── Button.test.tsx
-│   └── authSlice.test.ts
-├── App.tsx
-└── main.tsx
+#### Frontend
+- **React 19.2.0** - Biblioteca UI com Server Components
+- **TypeScript 5.9** - Superset JavaScript com tipagem estática
+- **Redux Toolkit 2.11** - Gerenciamento de estado com menos boilerplate
+- **React Router DOM 7.13** - Roteamento declarativo com lazy loading
+- **Axios 1.13** - Cliente HTTP com interceptors e retry
+- **Tailwind CSS 3.4** - Framework CSS utility-first
+- **Vite 7.2** - Build tool moderna com HMR rápido
+
+#### Testes
+- **Vitest 4.0** - Framework de testes unitários (compatível com Vite)
+- **Testing Library 16.3** - Utilitários para testar componentes React
+- **Jest DOM 6.9** - Matchers customizados para assertions DOM
+
+#### DevOps
+- **Docker** - Containerização com build multi-stage
+- **Nginx Alpine** - Servidor web leve para produção
+- **ESLint 9** - Linter para qualidade de código
+- **PostCSS + Autoprefixer** - Processamento CSS
+
+### Fluxo de Dados
+
+```
+┌──────────────┐
+│  UI Component│
+└──────┬───────┘
+       │ dispatch(action)
+       ▼
+┌──────────────┐
+│ Redux Store  │
+└──────┬───────┘
+       │ async thunk
+       ▼
+┌──────────────┐
+│   Service    │ (Facade)
+└──────┬───────┘
+       │ HTTP request
+       ▼
+┌──────────────┐
+│   API Client │ (Axios + Interceptors)
+└──────┬───────┘
+       │
+       ▼
+┌──────────────┐
+│  Backend API │
+└──────────────┘
+```
+[x] Requisição de dados em tempo real com Axios
+- [x] Layout responsivo para mobile, tablet e desktop
+- [x] Tailwind CSS configurado e otimizado
+- [x] Lazy Loading de rotas com React.lazy
+- [x] Paginação de 10 itens por página
+- [x] TypeScript em 100% do código
+- [x] Arquitetura em camadas bem definida
+- [x] Componentização e reusabilidade
+- [x] 83 testes unitários (100% de aprovação)
+
+### Requisitos Funcionais
+
+#### 1. Tela Inicial - Listagem de Pets
+- [x] GET /v1/pets com paginação
+- [x] Cards visuais com foto, nome, raça e idade
+- [x] Navegação de páginas (anterior/próxima)
+- [x] Busca por nome com filtro em tempo real
+- [x] Loading states e tratamento de erros
+- [x] Responsivo em todos os breakpoints
+
+#### 2. Tela de Detalhamento do Pet
+- [x] Navegação por clique no card
+- [x] GET /v1/pets/{id} para dados completos
+- [x] Exibição de tutor vinculado (quando existir)
+- [x] Nome do pet em destaque no cabeçalho
+- [x] Botões para editar e excluir
+- [x] Modal de confirmação para exclusão
+
+#### 3. Tela de Cadastro/Edição de Pet
+- [x] POST /v1/pets para novo cadastro
+- [x] PUT /v1/pets/{id} para atualização
+- [x] Campos: nome, raça, idade
+- [x] Validação de campos obrigatórios
+- [x] Upload de foto (POST /v1/pets/{id}/fotos)
+- [x] Preview de imagem
+- [x] Feedback de sucesso/erro
+
+#### 4. Tela de Cadastro/Edição de Tutor
+- [x] POST /v1/tutores para cadastro
+- [x] PUT /v1/tutores/{id} para edição
+- [x] Campos: nome, telefone, endereço, email, CPF
+- [x] Máscaras para telefone e CPF
+- [x] Validação de email e CPF
+- [x] Upload de foto (POST /v1/tutores/{id}/fotos)
+- [x] Vinculação de pets (POST /v1/tutores/{id}/pets/{petId})
+- [x] Remoção de vínculo (DELETE /v1/tutores/{id}/pets/{petId})
+- [x] Listagem de pets vinculados
+
+#### 5. Autenticação
+- [x] POST /autenticacao/login
+- [x] Refresh token automático (PUT /autenticacao/refresh)
+- [x] Interceptor Axios para injetar token
+- [x] Proteção de rotas com PrivateRoute
+- [x] Redirecionamento para login quando não autenticado
+- [x] Logout com limpeza de tokens do localStorage
+- [x] Persistência de sessão
+
+### Requisitos Técnicos Avançados
+
+#### a) Containerização
+- [x] Dockerfile multi-stage (build + production)
+- [x] Imagem final otimizada (~50MB)
+- [x] Nginx configurado com Gzip e cache
+- [x] Health checks (/health, /healthz, /ready)
+- [x] Docker Compose para orquestração
+- **Node.js 20+** e npm (para desenvolvimento local)
+- **Docker e Docker Compose** (para execução em container)
+- **Git** (para clonar o repositório)
+
+### Opção 1: Desenvolvimento Local (Recomendado para desenvolvimento)
+
+```bash
+# 1. Clonar o repositório
+git clone <repository-url>
+cd rodrigothaualimabarroso964208
+
+# 2. Instalar dependências
+npm install
+
+# 3. Executar em modo desenvolvimento (com hot-reload)
+npm run dev
+
+# 4. Acessar a aplicação
+# URL: http://localhost:5173
 ```
 
-### Stack Tecnológica
+**Scripts disponíveis:**
+```bash
+npm run dev          # Inicia servidor de desenvolvimento
+npm run build        # Build de produção
+npm run preview      # Preview do build de produção
+npm run lint         # Executar linter
+npm test             # Executar testes unitários
+npm test -- --ui     # Executar testes com interface visual
+npm test -- --coverage  # Executar testes com relatório de cobertura
+```
 
-- **React 19** - Framework UI
-- **TypeScript** - Tipagem estática
-- **Redux Toolkit** - Gerenciamento de estado global
-- **React Router v6** - Roteamento com lazy loading
-- **Axios** - Cliente HTTP com interceptors
-- **Tailwind CSS** - Framework CSS utility-first
-- **Vite** - Build tool e dev server
-- **Vitest** - Framework de testes
-- **Docker** - Containerização
-- **Nginx** - Servidor web de produção
+### Opção 2: Docker Compose (Recomendado para produção)
 
-### Padrões Implementados
+```bash
+# 1. Build e iniciar container
+docker-compose up -d
 
-#### 1. **Redux para Gerenciamento de Estado**
-- Store centralizada com slices separados (auth, pets, tutores)
-- Actions assíncronas com createAsyncThunk
-- Hooks tipados (useAppDispatch, useAppSelector)
+# 2. Verificar logs
+docker-compose logs -f
 
-#### 2. **Serviços em Camadas (Facade Pattern)**
-- Camada de serviços abstrai comunicação com API
-- Interceptors para autenticação e refresh token
-- Tratamento centralizado de erros
+# 3. Acessar aplicação
+# URL: http://localhost:3000
 
-#### 3. **Componentização**
-- Componentes reutilizáveis (Button, Input, Card, etc.)
-- Componentes de página especializados
-- Props tipadas com TypeScript
+# 4. Verificar health
+# URL: http://localhost:3000/health
 
-#### 4. **Lazy Loading**
-- Code splitting por rota
-- Carregamento sob demanda de páginas
-- Suspense boundaries para loading states
+# 5. Parar container
+docker-compose down
+```
 
-## ✅ Requisitos Implementados
+### Opção 3: Docker Manual
 
-### Requisitos Gerais
-- ✅ Requisição de dados em tempo real com Axios
-- ✅ Layout responsivo
-- ✅ Tailwind CSS
-- ✅ Lazy Loading de rotas
-- ✅ Paginação (10 itens por página)
-- ✅ TypeScript
-- ✅ Boas práticas de organização e componentização
-- ✅ Testes unitários básicos
+```bash
+# Build da imagem
+docker build -t pet-manager:latest .
 
-### Requisitos Específicos
+# Executar container
+docker run -d -p 3000:80 --name pet-manager pet-manager:latest
 
-#### 1. Tela Inicial - Listagem de Pets ✅
-- GET /v1/pets implementado
-- Cards com foto, nome, raça e idade
-- Paginação de 10 por página
-- Busca por nome para filtrar
+# Ver logs
+docker logs -f pet-manager
 
-#### 2. Tela de Detalhamento do Pet ✅
-- Navegação por clique no card
-- GET /v1/pets/{id}
-- Exibição de dados do tutor quando existir
-- Nome do pet em destaque
+# Parar e remover
+docker stop pet-manager && docker rm pet-manager
+```
 
-#### 3. Tela de Cadastro/Edição de Pet ✅
-- Formulário para novo pet (POST /v1/pets)
-- Edição de pet existente (PUT /v1/pets/{id})
-- Campos: nome, raça, idade
-- Upload de foto (POST /v1/pets/{id}/fotos)
+### Opção 4: Ambiente de Desenvolvimento com Docker
 
-#### 4. Tela de Cadastro/Edição de Tutor ✅
-- Cadastro de tutores (POST /v1/tutores)
-- Atualização (PUT /v1/tutores/{id})
-- Campos: nome, telefone, endereço, email, CPF
-- Máscaras para telefone e CPF
-- Upload de foto (POST /v1/tutores/{id}/fotos)
-- Vinculação de pets (POST /v1/tutores/{id}/pets/{petId})
-- Remoção de vínculo (DELETE /v1/tutores/{id}/pets/{petId})
+```bash
+# Iniciar ambiente dev com hot-reload em Docker
+docker-compose -f docker-compose.dev.yml up -d
 
-#### 5. Autenticação ✅
-- Login (POST /autenticacao/login)
-- Refresh token automático (PUT /autenticacao/refresh)
-- Proteção de rotas privadas
-- Logout e limpeza de tokens
+# Acessar em http://localhost:5173
+```
 
-### Requisitos Adicionais
+## Como Testar
 
-#### a) Health Checks ✅
-- Endpoint /health no Nginx
-- Healthcheck no Dockerfile
-- Liveness/Readiness no Docker Compose
+### Executar Testes Unitários
 
-#### b) Testes Unitários ✅
-- Testes de componentes com Vitest
-- Testes de Redux slices
-- Setup com @testing-library
+```bash
+# Executar todos os testes
+npm test
 
-#### c) Gerenciamento de Estado Redux ✅
-- Redux Toolkit implementado
-- Slices para auth, pets e tutores
-- Actions assíncronas com thunks
+# Executar com watch mode
+npm test -- --watch
 
-## 🚀 Como Executar
+# Executar com interface UI
+npm test -- --ui
 
-### Pré-requisitos
+# Gerar relatório de cobertura
+npm test -- --coverage
 
-- Node.js 20+ e npm
-- Docker e Docker Compose (opcional)
+# Executar testes específicos
+npm test -- Button.test.tsx
+```
 
-### Desenvolvimento Local
+### Resultados Esperados:
 
+**Endpoint de Login:** `POST https://pet-manager-api.geia.vip/autenticacao/login`
+
+### Fluxo de Autenticação
+
+1. Usuário envia credenciais para `/autenticacao/login`
+2. API retorna `access_token` e `refresh_token`
+3. Tokens são armazenados no `localStorage`
+4. Axios interceptor injeta `Authorization: Bearer {token}` em todas as requisições
+5. Quando token expira (401), interceptor chama automaticamente `/autenticacao/refresh`
+6. Novo token é obtido e requisição original é reenviada
+7. Se refresh falhar, usuário é redirecionado para login
+
+### Proteção de Rotas
+
+Todas as rotas (exceto `/login`) são protegidas pelo componente `PrivateRoute`:
+- Verifica se há token no localStorage
+- Redireciona para `/login` se não autenticado
+- Permite acesso se autenticado
+
+## Estrutura de Testes
+
+### Organização
+
+```
+src/
+├── components/__tests__/     # 41 testes
+│   ├── Button.test.tsx       # 8 testes
+│   ├── Card.test.tsx         # 5 testes
+│   ├── ConfirmDialog.test.tsx # 5 testes
+│   ├── Input.test.tsx        # 9 testes
+│   ├── Loading.test.tsx      # 2 testes
+│   ├── Pagination.test.tsx   # 6 testes
+│   └── Toast.test.tsx        # 6 testes
+│
+├── hooks/__tests__/          # 5 testes
+│   └── useToast.test.ts      # 5 testes
+│
+├── services/__tests__/       # 15 testes
+│   ├── authService.test.ts   # 4 testes
+│   ├── petService.test.ts    # 6 testes
+│   └── tutorService.test.ts  # 5 testes
+│
+└── Build Multi-Stage Docker
+
+O Dockerfile implementa build em duas etapas para otimização:
+
+**Etapa 1 - Build (Node.js 20 Alpine):**
+- Instala dependências de produção
+- Compila TypeScript e bundling com Vite
+- Otimiza assets (minificação, tree-shaking)
+
+**Etapa 2 - Production (Nginx Alpine):**
+- Copia apenas arquivos compilados (dist/)
+- Imagem final: ~50MB (vs ~1GB sem otimização)
+- Nginx configurado para SPA routing
+- Usuário não-root para segurança
+
+### Recursos de Produção
+
+**Performance:**
+- Compressão Gzip para todos os assets
+- Cache de 1 ano para arquivos estáticos (JS, CSS, imagens)
+- Lazy loading de rotas
+- Code splitting automático
+
+**Segurança:**
+**Design System:**
+- Tailwind CSS utility-first
+- Paleta de cores consistente
+- Tipografia hierárquica
+- Espaçamento baseado em escala
+
+**Responsividade:**
+- Mobile-first approach
+- Breakpoints: sm (640px), md (768px), lg (1024px), xl (1280px)
+- Grid adaptativo
+- Navegação mobile com menu hamburguer
+
+**UX:**
+- Feedback visual imediato (loading, sucesso, erro)
+- Toasts para notificações não-obstrutivas
+- Modais de confirmação para ações destrutivas
+- Estados vazios com call-to-action
+- Skeleton screens durante carregamento
+
+**Acessibilidade:**
+- Navegação por teclado
+- Labels em inputs
+- Contraste adequado
+- Estados de foco visíveis
+
+## Histórico depoint `/ready` para readiness probes
+- Logs estruturados
+
+### Configuração de Ambiente
+
+**API Base URL:**
+Configurado em `src/services/api.ts`:
+```typescript
+const API_BASE_URL = 'https://pet-manager-api.geia.vip';
+```
+
+Para alterar:
+1. Editar antes do build, ou
+2. Usar variáveis de ambiente no build:
+```bash
+VITE_API_URL=https://outra-api.com npm run build
+```
+
+### Deploy em Cloud
+
+**Docker Hub:**
+```bash
+docker tag pet-manager:latest seuusuario/pet-manager:1.0.0
+docker push seuusuario/pet-manager:1.0.0
+```
+
+**AWS ECS/Fargate:**
+```bash
+aws ecr get-login-password | docker login --username AWS --password-stdin <account>.dkr.ecr.us-east-1.amazonaws.com
+docker tag pet-manager:latest <account>.dkr.ecr.us-east-1.amazonaws.com/pet-manager:latest
+docker push <account>.dkr.ecr.us-east-1.amazonaws.com/pet-manager:latest
+```
+
+## Interface do Usuário
 1. **Instalar dependências:**
 ```bash
 npm install
@@ -173,31 +471,62 @@ npm run dev
 ```
 
 3. **Acessar a aplicação:**
-```
-http://localhost:5173
-```
+Commits organizados de forma incremental seguindo boas práticas:
 
-### Executar Testes
+1. **Setup inicial**: Configuração Vite, TypeScript, Tailwind
+2. **Estrutura base**: Criação de pastas e arquivos iniciais
+3. **Services**: Implementação de API client e services
+4. **Redux**: Setup de store e slices
+5. **Componentes**: Desenvolvimento de UI components
+6. **Páginas**: Criação de todas as páginas
+7. **Autenticação**: Implementação de login e proteção de rotas
+8. **Testes**: 83 testes unitários
+9. **Docker**: Containerização com multi-stage build
+**Testes:**
+- Aumentar cobertura de testes para > 80%
+- Testes de integração com Mock Service Worker
+- Testes E2E com Playwright
+- Visual regression testing
 
-```bash
-npm test
-```
+**Features:**
+- Internacionalização (i18n) - pt-BR e en-US
+- PWA - Service Worker, offline-first
+- Dark mode
+- Filtros avançados (múltiplos critérios)
+- Ordenação customizável
+- Exportação de dados (PDF, Excel)
+- Busca full-text
+- Histórico de ações (audit log)
 
-### Build de Produção
+**Performance:**
+- Virtual scrolling para listas grandes
+- Infinite scroll como alternativa à paginação
+- Otimização de imagens (WebP, lazy loading)
+- Service Worker para cache
+- Prefetch de dados
 
-```bash
-npm run build
-npm run preview
-```
+**DevOps:**
+- CI/CD com GitHub Actions
+- Deploy automático
+- Monitoramento com Sentry
+- Analytics
+- Logs centralizados
 
-### Docker (Recomendado)
+## Documentação Adicional
 
-1. **Build e execução com Docker Compose:**
-```bash
-docker-compose up --build
-```
+- [DOCKER.md](DOCKER.md) - Guia completo de containerização
+- [README.Docker.md](README.Docker.md) - Documentação detalhada Docker
 
-2. **Acessar a aplicação:**
+## Licença
+
+Projeto desenvolvido como parte do processo seletivo.
+
+## Autor
+
+**Rodrigo Thauã Lima Barroso**
+- CPF: 964.208.982-34
+- Vaga: Engenheiro da Computação Sênior
+- Janeiro 2026**
 ```
 http://localhost:3000
 ```
