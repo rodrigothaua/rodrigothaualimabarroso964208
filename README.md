@@ -12,6 +12,110 @@
 
 Sistema web para gerenciamento de registro público de Pets e Tutores desenvolvido para o Estado de Mato Grosso. O projeto consome a API pública disponibilizada e implementa todas as funcionalidades CRUD necessárias com interface moderna e responsiva.
 
+## Status do Projeto e Priorização
+
+### Funcionalidades Implementadas (Completas)
+
+**PRIORIDADE ALTA - Requisitos Essenciais:**
+- Autenticação JWT com login, refresh token automático e logout
+- CRUD completo de Pets (criar, listar, visualizar, editar, excluir)
+- CRUD completo de Tutores (criar, listar, visualizar, editar, excluir)
+- Paginação de listagens (10 itens por página)
+- Busca por nome em tempo real com filtros dinâmicos
+- Upload e exibição de fotos para Pets e Tutores
+- Vinculação e desvinculação de Pets aos Tutores
+- Validação de formulários (campos obrigatórios, email, CPF)
+- Máscaras de entrada (telefone, CPF)
+- Proteção de rotas privadas (redirecionamento para login)
+- Layout responsivo mobile, tablet e desktop
+- Estados de loading e tratamento de erros
+- Modais de confirmação para ações destrutivas
+- Notificações toast para feedback do usuário
+
+**PRIORIDADE ALTA - Qualidade de Código:**
+- TypeScript em 100% do código fonte
+- Arquitetura em camadas (Presentation, State, Service, API)
+- Padrão Facade na camada de serviços
+- Redux Toolkit para gerenciamento de estado
+- Componentização e reusabilidade de código
+- 83 testes unitários com 100% de aprovação
+  - 41 testes de componentes UI
+  - 15 testes de serviços (authService, petService, tutorService)
+  - 22 testes de Redux slices
+  - 5 testes de hooks customizados
+- Código limpo sem console.log em produção
+- Commits incrementais e organizados no Git
+
+**PRIORIDADE MÉDIA - Otimização e Performance:**
+- Lazy loading de rotas com React.lazy e Suspense
+- Code splitting automático (redução de bundle inicial)
+- Interceptor Axios para injeção de token e retry
+- Compressão Gzip em produção
+- Cache de assets estáticos (1 ano)
+
+**PRIORIDADE MÉDIA - DevOps:**
+- Containerização Docker multi-stage
+- Imagem de produção otimizada (~50MB com Nginx Alpine)
+- Docker Compose para orquestração
+- Scripts de build para Windows e Linux
+- Health checks (/health, /healthz, /ready)
+- Configuração Nginx com security headers
+
+### Funcionalidades Não Implementadas (Escopo Futuro)
+
+**Testes Avançados:**
+- Testes de integração com Mock Service Worker (MSW)
+- Testes end-to-end (E2E) com Playwright ou Cypress
+- Visual regression testing
+- Aumento de cobertura de código para >90%
+
+**Features Avançadas:**
+- Internacionalização (i18n) - suporte a múltiplos idiomas
+- PWA (Progressive Web App) com Service Worker
+- Modo escuro (dark mode)
+- Filtros avançados com múltiplos critérios simultâneos
+- Ordenação customizável de listagens
+- Exportação de dados (PDF, Excel, CSV)
+- Busca full-text avançada
+- Histórico de ações (audit log)
+- Virtual scrolling para listas muito grandes
+- Infinite scroll como alternativa à paginação
+- Otimização de imagens (WebP, lazy loading de thumbnails)
+- Prefetch de dados para navegação mais rápida
+
+**DevOps e Monitoramento:**
+- Pipeline CI/CD com GitHub Actions
+- Deploy automático em cloud (AWS, Azure, GCP)
+- Monitoramento de erros com Sentry
+- Analytics de uso
+- Logs centralizados e estruturados
+- Métricas de performance (Web Vitals)
+
+### Critérios de Priorização
+
+**1. Requisitos Funcionais Obrigatórios (Prioridade Máxima):**
+Todas as funcionalidades CRUD, autenticação, paginação e upload de fotos foram priorizadas como essenciais para um MVP funcional que atende aos requisitos do projeto.
+
+**2. Qualidade e Manutenibilidade (Prioridade Alta):**
+Testes unitários, TypeScript, arquitetura em camadas e padrões de projeto foram priorizados para garantir código profissional, manutenível e escalável.
+
+**3. Performance e UX (Prioridade Média-Alta):**
+Lazy loading, responsividade, feedback visual e otimizações foram implementadas para garantir boa experiência do usuário.
+
+**4. Containerização (Prioridade Média):**
+Docker foi implementado para facilitar deploy e garantir consistência entre ambientes de desenvolvimento e produção.
+
+**5. Features Avançadas (Escopo Futuro):**
+Funcionalidades como PWA, dark mode, i18n e analytics foram deixadas para iterações futuras por não serem críticas para o funcionamento básico do sistema.
+
+### Decisões Técnicas Justificadas
+
+- **Redux Toolkit vs Context API:** Escolhido Redux por melhor escalabilidade, DevTools, middleware e padrões estabelecidos para aplicações complexas
+- **Vitest vs Jest:** Vitest escolhido por integração nativa com Vite, performance superior e compatibilidade com ES modules
+- **Tailwind CSS vs CSS-in-JS:** Tailwind escolhido por produtividade, consistência de design, bundle size menor e melhor performance
+- **Axios vs Fetch:** Axios escolhido por interceptors, timeout, retry automático e melhor tratamento de erros
+- **Multi-stage Docker:** Implementado para reduzir imagem de ~1GB para ~50MB, melhorando tempo de deploy e custos
+
 ## Arquitetura do Sistema
 
 ```
@@ -546,7 +650,7 @@ docker build -t pet-manager .
 docker run -p 3000:80 pet-manager
 ```
 
-## 🔐 Autenticação
+## Autenticação
 
 A aplicação requer autenticação para acessar as funcionalidades. Use as credenciais fornecidas pela API para fazer login.
 
@@ -555,7 +659,7 @@ O sistema implementa:
 - Redirecionamento para login quando não autenticado
 - Proteção de todas as rotas privadas
 
-## 🧪 Testes
+## Testes
 
 Testes implementados:
 - Componente Button (renderização, variantes, loading)
@@ -566,7 +670,7 @@ Para adicionar mais testes:
 npm test -- --watch
 ```
 
-## 📦 Deploy
+## Deploy
 
 ### Produção com Docker
 
@@ -590,7 +694,7 @@ const API_BASE_URL = 'https://pet-manager-api.geia.vip';
 
 Para alterar em produção, modifique antes do build ou use substituição em tempo de build.
 
-## 🎨 Interface
+## Interface
 
 - Design limpo e moderno com Tailwind CSS
 - Responsivo para mobile, tablet e desktop
@@ -599,7 +703,7 @@ Para alterar em produção, modifique antes do build ou use substituição em te
 - Cards visuais para listagens
 - Modais para ações específicas
 
-## 📝 Commits
+## Commits
 
 Os commits foram organizados de forma incremental e com mensagens descritivas seguindo boas práticas:
 
@@ -610,7 +714,7 @@ Os commits foram organizados de forma incremental e com mensagens descritivas se
 - Testes e documentação
 - Containerização
 
-## 🔄 Melhorias Futuras
+## Melhorias Futuras
 
 Possíveis incrementos:
 - Mais testes unitários e de integração
@@ -623,10 +727,13 @@ Possíveis incrementos:
 - Exportação de relatórios
 - Dark mode
 
-## 📄 Licença
+## Licença
 
 Projeto desenvolvido como parte de processo seletivo.
 
-## 👨‍💻 Autor
+## Autor
 
-Rodrigo Thaualima Barroso
+**Rodrigo Thauã Lima Barroso**
+- CPF: 964.208.982-34
+- Vaga: Engenheiro da Computação Sênior
+- Janeiro 2026
