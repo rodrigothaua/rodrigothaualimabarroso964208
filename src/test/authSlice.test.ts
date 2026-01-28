@@ -5,8 +5,8 @@ describe('Auth Slice', () => {
   it('should handle initial state', () => {
     const initialState = {
       isAuthenticated: false,
-      token: null,
-      refreshToken: null,
+      token: undefined,
+      refreshToken: undefined,
       loading: false,
       error: null,
     };
