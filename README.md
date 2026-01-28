@@ -59,11 +59,15 @@ Sistema web para gerenciamento de registro público de Pets e Tutores desenvolvi
 
 **PRIORIDADE MÉDIA - DevOps:**
 - Containerização Docker multi-stage
-- Imagem de produção otimizada (~50MB com Nginx Alpine)
+- Imagem de produção otimizada (93.3MB com Nginx Alpine)
 - Docker Compose para orquestração
 - Scripts de build para Windows e Linux
-- Health checks (/health, /healthz, /ready)
+- Health checks (/health, /healthz, /ready) - testados e funcionais
 - Configuração Nginx com security headers
+- Kubernetes manifests completos (Deployment, Service, Ingress, HPA, ConfigMap)
+- Auto-scaling configurado (3-10 réplicas baseado em CPU/Memória)
+- Resource limits e requests definidos
+- Liveness e Readiness probes configurados
 
 ### Funcionalidades Não Implementadas (Escopo Futuro)
 
@@ -94,6 +98,8 @@ Sistema web para gerenciamento de registro público de Pets e Tutores desenvolvi
 - Analytics de uso
 - Logs centralizados e estruturados
 - Métricas de performance (Web Vitals)
+- Network Policies para segurança de rede no Kubernetes
+- Persistent Volumes para armazenamento
 
 ### Critérios de Priorização
 
@@ -625,6 +631,7 @@ Commits organizados de forma incremental seguindo boas práticas:
 
 - [DOCKER.md](DOCKER.md) - Guia completo de containerização
 - [README.Docker.md](README.Docker.md) - Documentação detalhada Docker
+- [KUBERNETES.md](KUBERNETES.md) - Deploy e gerenciamento em Kubernetes
 
 ## Licença
 
