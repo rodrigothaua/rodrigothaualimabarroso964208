@@ -26,10 +26,6 @@ export const login = createAsyncThunk(
       const response = await authService.login(credentials);
       localStorage.setItem('token', response.access_token);
       localStorage.setItem('refreshToken', response.refresh_token);
-      console.log('✅ Tokens salvos no localStorage:', {
-        token: response.access_token,
-        refreshToken: response.refresh_token
-      });
       return response;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Falha no login');
@@ -77,7 +73,6 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
         state.token = action.payload.access_token;
         state.refreshToken = action.payload.refresh_token;
-        console.log('✅ Estado atualizado - isAuthenticated:', state.isAuthenticated);
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;

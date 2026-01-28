@@ -88,7 +88,6 @@ export const PetFormPage: React.FC = () => {
 
       setTimeout(() => navigate(`/pets/${petId}`), 1500);
     } catch (error) {
-      console.error('Erro ao salvar pet:', error);
       showToast('Erro ao salvar pet. Tente novamente.', 'error');
     }
   };

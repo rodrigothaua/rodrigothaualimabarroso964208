@@ -107,7 +107,6 @@ export const TutorFormPage: React.FC = () => {
 
       setTimeout(() => navigate(`/tutores/${tutorId}`), 1500);
     } catch (error) {
-      console.error('Erro ao salvar tutor:', error);
       showToast('Erro ao salvar tutor. Tente novamente.', 'error');
     }
   };
