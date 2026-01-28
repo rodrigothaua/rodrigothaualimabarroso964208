@@ -7,6 +7,7 @@ import { Loading } from '../components/Loading';
 import { Card } from '../components/Card';
 import { Toast } from '../components/Toast';
 import { ConfirmDialog } from '../components/ConfirmDialog';
+import { ImageZoom } from '../components/ImageZoom';
 import { useToast } from '../hooks/useToast';
 
 export const PetDetailPage: React.FC = () => {
@@ -16,6 +17,7 @@ export const PetDetailPage: React.FC = () => {
   const { currentPet, loading } = useAppSelector((state) => state.pets);
   const { toast, showToast, hideToast } = useToast();
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [showImageZoom, setShowImageZoom] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -59,11 +61,29 @@ export const PetDetailPage: React.FC = () => {
           <div className="grid md:grid-cols-2 gap-6">
             <div>
               {currentPet.foto ? (
-                <img
-                  src={currentPet.foto.url}
-                  alt={currentPet.nome}
-                  className="w-full rounded-lg"
-                />
+                <div className="relative group">
+                  <img
+                    src={currentPet.foto.url}
+                    alt={currentPet.nome}
+                    className="w-full rounded-lg cursor-pointer transition-opacity"
+                    onClick={() => setShowImageZoom(true)}
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all rounded-lg pointer-events-none">
+                    <svg
+                      className="w-16 h-16 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"
+                      />
+                    </svg>
+                  </div>
+                </div>
               ) : (
                 <div className="w-full aspect-square bg-gray-200 rounded-lg flex items-center justify-center">
                   <span className="text-gray-400 text-xl">Sem foto</span>
@@ -120,6 +140,14 @@ export const PetDetailPage: React.FC = () => {
           onCancel={() => setShowConfirmDelete(false)}
           confirmText="Excluir"
           cancelText="Cancelar"
+        />
+      )}
+
+      {showImageZoom && currentPet.foto && (
+        <ImageZoom
+          src={currentPet.foto.url}
+          alt={currentPet.nome}
+          onClose={() => setShowImageZoom(false)}
         />
       )}
     </div>
