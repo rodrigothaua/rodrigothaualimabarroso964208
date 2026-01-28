@@ -24,8 +24,9 @@ export const petService = {
     return response.data;
   },
 
-  delete: async (id: number): Promise<void> => {
-    await apiClient.delete(`/v1/pets/${id}`);
+  delete: async (id: number): Promise<string> => {
+    const response = await apiClient.delete(`/v1/pets/${id}`);
+    return response.data;
   },
 
   uploadPhoto: async (id: number, file: File): Promise<any> => {

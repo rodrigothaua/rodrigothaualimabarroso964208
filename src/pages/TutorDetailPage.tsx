@@ -34,7 +34,7 @@ export const TutorDetailPage: React.FC = () => {
       if (id) {
         const result = await dispatch(deleteTutor(Number(id)));
         if (deleteTutor.fulfilled.match(result)) {
-          showToast('Tutor excluído com sucesso!', 'success');
+          showToast(result.payload.message, 'success');
           setTimeout(() => navigate('/tutores'), 1500);
         } else {
           showToast('Erro ao excluir tutor. Tente novamente.', 'error');
@@ -49,7 +49,7 @@ export const TutorDetailPage: React.FC = () => {
       setShowLinkModal(false);
       setSelectedPetId(null);
       if (linkPetToTutor.fulfilled.match(result)) {
-        showToast('Pet vinculado com sucesso!', 'success');
+        showToast(result.payload.message, 'success');
         dispatch(fetchTutorById(Number(id)));
       } else {
         showToast('Erro ao vincular pet.', 'error');
@@ -62,7 +62,7 @@ export const TutorDetailPage: React.FC = () => {
       if (id) {
         const result = await dispatch(unlinkPetFromTutor({ tutorId: Number(id), petId }));
         if (unlinkPetFromTutor.fulfilled.match(result)) {
-          showToast('Pet desvinculado com sucesso!', 'success');
+          showToast(result.payload.message, 'success');
           dispatch(fetchTutorById(Number(id)));
         } else {
           showToast('Erro ao desvincular pet.', 'error');

@@ -83,8 +83,8 @@ export const deletePet = createAsyncThunk(
   'pets/delete',
   async (id: number, { rejectWithValue }) => {
     try {
-      await petService.delete(id);
-      return id;
+      const message = await petService.delete(id);
+      return { id, message };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Erro ao excluir pet');
     }
@@ -185,9 +185,9 @@ const petSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(deletePet.fulfilled, (state, action: PayloadAction<number>) => {
+      .addCase(deletePet.fulfilled, (state, action: PayloadAction<{ id: number; message: string }>) => {
         state.loading = false;
-        state.pets = state.pets.filter(p => p.id !== action.payload);
+        state.pets = state.pets.filter(p => p.id !== action.payload.id);
       })
       .addCase(deletePet.rejected, (state, action) => {
         state.loading = false;

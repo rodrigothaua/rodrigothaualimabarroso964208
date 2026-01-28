@@ -29,7 +29,7 @@ export const PetDetailPage: React.FC = () => {
       if (id) {
         const result = await dispatch(deletePet(Number(id)));
         if (deletePet.fulfilled.match(result)) {
-          showToast('Pet excluído com sucesso!', 'success');
+          showToast(result.payload.message, 'success');
           setTimeout(() => navigate('/'), 1500);
         } else {
           showToast('Erro ao excluir pet. Tente novamente.', 'error');
