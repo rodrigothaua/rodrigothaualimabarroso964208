@@ -32,9 +32,9 @@ export const Toast: React.FC<ToastProps> = ({
 
   return (
     <div className="fixed bottom-4 right-4 z-50 animate-slide-up">
-      <div className={`${bgColor} text-white px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 min-w-[300px]`}>
-        <span className="text-2xl">{icon}</span>
-        <p className="flex-1">{message}</p>
+      <div className={`${bgColor} px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 min-w-[300px]`}>
+        <span className="text-2xl text-white font-bold">{icon}</span>
+        <p className="flex-1 text-white font-medium">{message}</p>
         <button 
           onClick={onClose}
           className="text-white hover:text-gray-200 text-xl font-bold"

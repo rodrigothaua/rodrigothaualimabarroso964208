@@ -7,6 +7,7 @@ import { Button } from '../components/Button';
 import { Loading } from '../components/Loading';
 import { Card } from '../components/Card';
 import { Toast } from '../components/Toast';
+import { ConfirmDialog } from '../components/ConfirmDialog';
 import { useToast } from '../hooks/useToast';
 
 export const TutorDetailPage: React.FC = () => {
@@ -18,6 +19,9 @@ export const TutorDetailPage: React.FC = () => {
   const { toast, showToast, hideToast } = useToast();
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [selectedPetId, setSelectedPetId] = useState<number | null>(null);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [showConfirmUnlink, setShowConfirmUnlink] = useState(false);
+  const [petToUnlink, setPetToUnlink] = useState<number | null>(null);
 
   useEffect(() => {
     if (id) {
@@ -30,17 +34,16 @@ export const TutorDetailPage: React.FC = () => {
   }, [dispatch, id]);
 
   const handleDelete = async () => {
-    if (window.confirm('Tem certeza que deseja excluir este tutor?')) {
-      if (id) {
-        const result = await dispatch(deleteTutor(Number(id)));
-        if (deleteTutor.fulfilled.match(result)) {
-          showToast(result.payload.message, 'success');
-          setTimeout(() => navigate('/tutores'), 1500);
-        } else {
-          showToast('Erro ao excluir tutor. Tente novamente.', 'error');
-        }
+    if (id) {
+      const result = await dispatch(deleteTutor(Number(id)));
+      if (deleteTutor.fulfilled.match(result)) {
+        showToast(result.payload.message, 'success');
+        setTimeout(() => navigate('/tutores'), 1500);
+      } else {
+        showToast('Erro ao excluir tutor. Tente novamente.', 'error');
       }
     }
+    setShowConfirmDelete(false);
   };
 
   const handleLinkPet = async () => {
@@ -58,17 +61,17 @@ export const TutorDetailPage: React.FC = () => {
   };
 
   const handleUnlinkPet = async (petId: number) => {
-    if (window.confirm('Deseja desvincular este pet?')) {
-      if (id) {
-        const result = await dispatch(unlinkPetFromTutor({ tutorId: Number(id), petId }));
-        if (unlinkPetFromTutor.fulfilled.match(result)) {
-          showToast(result.payload.message, 'success');
-          dispatch(fetchTutorById(Number(id)));
-        } else {
-          showToast('Erro ao desvincular pet.', 'error');
-        }
+    if (id) {
+      const result = await dispatch(unlinkPetFromTutor({ tutorId: Number(id), petId }));
+      if (unlinkPetFromTutor.fulfilled.match(result)) {
+        showToast(result.payload.message, 'success');
+        dispatch(fetchTutorById(Number(id)));
+      } else {
+        showToast('Erro ao desvincular pet.', 'error');
       }
     }
+    setShowConfirmUnlink(false);
+    setPetToUnlink(null);
   };
 
   if (loading || !currentTutor) {
@@ -133,7 +136,7 @@ export const TutorDetailPage: React.FC = () => {
                 <Button onClick={() => navigate(`/tutores/${id}/editar`)}>
                   Editar
                 </Button>
-                <Button onClick={handleDelete} variant="danger">
+                <Button onClick={() => setShowConfirmDelete(true)} variant="danger">
                   Excluir
                 </Button>
               </div>
@@ -169,7 +172,10 @@ export const TutorDetailPage: React.FC = () => {
                       </div>
                       <Button
                         variant="danger"
-                        onClick={() => handleUnlinkPet(pet.id)}
+                        onClick={() => {
+                          setPetToUnlink(pet.id);
+                          setShowConfirmUnlink(true);
+                        }}
                         className="text-sm px-2 py-1"
                       >
                         Remover
@@ -223,6 +229,31 @@ export const TutorDetailPage: React.FC = () => {
               )}
             </Card>
           </div>
+        )}
+
+        {showConfirmDelete && (
+          <ConfirmDialog
+            title="Excluir Tutor"
+            message="Tem certeza que deseja excluir este tutor? Esta ação não pode ser desfeita."
+            onConfirm={handleDelete}
+            onCancel={() => setShowConfirmDelete(false)}
+            confirmText="Excluir"
+            cancelText="Cancelar"
+          />
+        )}
+
+        {showConfirmUnlink && petToUnlink && (
+          <ConfirmDialog
+            title="Desvincular Pet"
+            message="Deseja realmente desvincular este pet do tutor?"
+            onConfirm={() => handleUnlinkPet(petToUnlink)}
+            onCancel={() => {
+              setShowConfirmUnlink(false);
+              setPetToUnlink(null);
+            }}
+            confirmText="Desvincular"
+            cancelText="Cancelar"
+          />
         )}
       </div>
     </div>

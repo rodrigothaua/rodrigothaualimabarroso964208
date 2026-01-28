@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { fetchPetById, deletePet, clearCurrentPet } from '../store/petSlice';
@@ -6,6 +6,7 @@ import { Button } from '../components/Button';
 import { Loading } from '../components/Loading';
 import { Card } from '../components/Card';
 import { Toast } from '../components/Toast';
+import { ConfirmDialog } from '../components/ConfirmDialog';
 import { useToast } from '../hooks/useToast';
 
 export const PetDetailPage: React.FC = () => {
@@ -14,6 +15,7 @@ export const PetDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const { currentPet, loading } = useAppSelector((state) => state.pets);
   const { toast, showToast, hideToast } = useToast();
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -25,17 +27,16 @@ export const PetDetailPage: React.FC = () => {
   }, [dispatch, id]);
 
   const handleDelete = async () => {
-    if (window.confirm('Tem certeza que deseja excluir este pet?')) {
-      if (id) {
-        const result = await dispatch(deletePet(Number(id)));
-        if (deletePet.fulfilled.match(result)) {
-          showToast(result.payload.message, 'success');
-          setTimeout(() => navigate('/'), 1500);
-        } else {
-          showToast('Erro ao excluir pet. Tente novamente.', 'error');
-        }
+    if (id) {
+      const result = await dispatch(deletePet(Number(id)));
+      if (deletePet.fulfilled.match(result)) {
+        showToast(result.payload.message, 'success');
+        setTimeout(() => navigate('/'), 1500);
+      } else {
+        showToast('Erro ao excluir pet. Tente novamente.', 'error');
       }
     }
+    setShowConfirmDelete(false);
   };
 
   if (loading || !currentPet) {
@@ -102,7 +103,7 @@ export const PetDetailPage: React.FC = () => {
                 <Button onClick={() => navigate(`/pets/${id}/editar`)}>
                   Editar
                 </Button>
-                <Button onClick={handleDelete} variant="danger">
+                <Button onClick={() => setShowConfirmDelete(true)} variant="danger">
                   Excluir
                 </Button>
               </div>
@@ -110,6 +111,17 @@ export const PetDetailPage: React.FC = () => {
           </div>
         </Card>
       </div>
+
+      {showConfirmDelete && (
+        <ConfirmDialog
+          title="Excluir Pet"
+          message="Tem certeza que deseja excluir este pet? Esta ação não pode ser desfeita."
+          onConfirm={handleDelete}
+          onCancel={() => setShowConfirmDelete(false)}
+          confirmText="Excluir"
+          cancelText="Cancelar"
+        />
+      )}
     </div>
   );
 };
