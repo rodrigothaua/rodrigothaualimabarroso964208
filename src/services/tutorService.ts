@@ -24,8 +24,9 @@ export const tutorService = {
     return response.data;
   },
 
-  delete: async (id: number): Promise<void> => {
-    await apiClient.delete(`/v1/tutores/${id}`);
+  delete: async (id: number): Promise<string> => {
+    const response = await apiClient.delete(`/v1/tutores/${id}`);
+    return response.data;
   },
 
   uploadPhoto: async (id: number, file: File): Promise<any> => {
@@ -43,11 +44,13 @@ export const tutorService = {
     await apiClient.delete(`/v1/tutores/${id}/fotos/${fotoId}`);
   },
 
-  linkPet: async (tutorId: number, petId: number): Promise<void> => {
-    await apiClient.post(`/v1/tutores/${tutorId}/pets/${petId}`);
+  linkPet: async (tutorId: number, petId: number): Promise<string> => {
+    const response = await apiClient.post(`/v1/tutores/${tutorId}/pets/${petId}`);
+    return response.data;
   },
 
-  unlinkPet: async (tutorId: number, petId: number): Promise<void> => {
-    await apiClient.delete(`/v1/tutores/${tutorId}/pets/${petId}`);
+  unlinkPet: async (tutorId: number, petId: number): Promise<string> => {
+    const response = await apiClient.delete(`/v1/tutores/${tutorId}/pets/${petId}`);
+    return response.data;
   },
 };

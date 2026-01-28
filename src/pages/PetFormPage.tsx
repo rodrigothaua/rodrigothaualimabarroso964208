@@ -6,17 +6,21 @@ import { createPet, updatePet, uploadPetPhoto, fetchPetById, clearCurrentPet } f
 import { Input } from '../components/Input';
 import { Button } from '../components/Button';
 import { Card } from '../components/Card';
+import { Toast } from '../components/Toast';
+import { useToast } from '../hooks/useToast';
 
 export const PetFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { currentPet, loading } = useAppSelector((state) => state.pets);
+  const { toast, showToast, hideToast } = useToast();
   
   const [nome, setNome] = useState('');
   const [raca, setRaca] = useState('');
   const [idade, setIdade] = useState('');
   const [foto, setFoto] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string>('');
 
   useEffect(() => {
     if (id) {
@@ -32,8 +36,19 @@ export const PetFormPage: React.FC = () => {
       setNome(currentPet.nome);
       setRaca(currentPet.raca);
       setIdade(String(currentPet.idade));
+      if (currentPet.foto) {
+        setPreviewUrl(currentPet.foto.url);
+      }
     }
   }, [currentPet, id]);
+
+  useEffect(() => {
+    if (foto) {
+      const objectUrl = URL.createObjectURL(foto);
+      setPreviewUrl(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
+    }
+  }, [foto]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -51,14 +66,18 @@ export const PetFormPage: React.FC = () => {
         const result = await dispatch(updatePet({ id: Number(id), pet: petData }));
         if (updatePet.fulfilled.match(result)) {
           petId = Number(id);
+          showToast('Pet atualizado com sucesso!', 'success');
         } else {
+          showToast('Erro ao atualizar pet. Tente novamente.', 'error');
           return;
         }
       } else {
         const result = await dispatch(createPet(petData));
         if (createPet.fulfilled.match(result)) {
           petId = result.payload.id;
+          showToast('Pet cadastrado com sucesso!', 'success');
         } else {
+          showToast('Erro ao cadastrar pet. Tente novamente.', 'error');
           return;
         }
       }
@@ -67,15 +86,19 @@ export const PetFormPage: React.FC = () => {
         await dispatch(uploadPetPhoto({ id: petId, file: foto }));
       }
 
-      navigate(`/pets/${petId}`);
+      setTimeout(() => navigate(`/pets/${petId}`), 1500);
     } catch (error) {
       console.error('Erro ao salvar pet:', error);
+      showToast('Erro ao salvar pet. Tente novamente.', 'error');
     }
   };
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="max-w-2xl mx-auto">
+      {toast.show && (
+        <Toast message={toast.message} type={toast.type} onClose={hideToast} />
+      )}
+      <div className="max-w-4xl mx-auto">
         <div className="mb-6">
           <Button onClick={() => navigate(-1)} variant="secondary">
             ← Voltar
@@ -88,56 +111,81 @@ export const PetFormPage: React.FC = () => {
           </h1>
 
           <form onSubmit={handleSubmit}>
-            <Input
-              label="Nome *"
-              type="text"
-              value={nome}
-              onChange={(e) => setNome(e.target.value)}
-              required
-              placeholder="Nome do pet"
-            />
+            <div className="grid md:grid-cols-2 gap-6 mb-6">
+              {/* Coluna da Foto */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Foto do Pet
+                </label>
+                <div className="space-y-4">
+                  {previewUrl ? (
+                    <div className="w-full aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                      <img
+                        src={previewUrl}
+                        alt="Preview"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-full aspect-square bg-gray-200 rounded-lg flex items-center justify-center">
+                      <div className="text-center text-gray-400">
+                        <span className="text-6xl">🐾</span>
+                        <p className="mt-2">Nenhuma foto selecionada</p>
+                      </div>
+                    </div>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setFoto(e.target.files?.[0] || null)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  />
+                </div>
+              </div>
 
-            <Input
-              label="Raça *"
-              type="text"
-              value={raca}
-              onChange={(e) => setRaca(e.target.value)}
-              required
-              placeholder="Raça do pet"
-            />
+              {/* Coluna dos Inputs */}
+              <div>
+                <Input
+                  label="Nome *"
+                  type="text"
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
+                  required
+                  placeholder="Nome do pet"
+                />
 
-            <Input
-              label="Idade *"
-              type="number"
-              value={idade}
-              onChange={(e) => setIdade(e.target.value)}
-              required
-              min="0"
-              placeholder="Idade em anos"
-            />
+                <Input
+                  label="Raça *"
+                  type="text"
+                  value={raca}
+                  onChange={(e) => setRaca(e.target.value)}
+                  required
+                  placeholder="Raça do pet"
+                />
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Foto do Pet
-              </label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => setFoto(e.target.files?.[0] || null)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              />
+                <Input
+                  label="Idade *"
+                  type="number"
+                  value={idade}
+                  onChange={(e) => setIdade(e.target.value)}
+                  required
+                  min="0"
+                  placeholder="Idade em anos"
+                />
+              </div>
             </div>
 
-            <div className="flex gap-2">
-              <Button type="submit" isLoading={loading}>
-                {id ? 'Atualizar' : 'Cadastrar'}
-              </Button>
+            {/* Botões de Ação */}
+            <div className="flex gap-2 pt-4 border-t justify-end">
               <Button
                 type="button"
                 variant="secondary"
                 onClick={() => navigate(-1)}
               >
                 Cancelar
+              </Button>
+              <Button type="submit" isLoading={loading}>
+                {id ? 'Atualizar' : 'Cadastrar'}
               </Button>
             </div>
           </form>

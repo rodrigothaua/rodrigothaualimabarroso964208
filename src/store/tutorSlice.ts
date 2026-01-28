@@ -83,8 +83,8 @@ export const deleteTutor = createAsyncThunk(
   'tutores/delete',
   async (id: number, { rejectWithValue }) => {
     try {
-      await tutorService.delete(id);
-      return id;
+      const message = await tutorService.delete(id);
+      return { id, message };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Erro ao excluir tutor');
     }
@@ -107,8 +107,8 @@ export const linkPetToTutor = createAsyncThunk(
   'tutores/linkPet',
   async ({ tutorId, petId }: { tutorId: number; petId: number }, { rejectWithValue }) => {
     try {
-      await tutorService.linkPet(tutorId, petId);
-      return { tutorId, petId };
+      const message = await tutorService.linkPet(tutorId, petId);
+      return { tutorId, petId, message };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Erro ao vincular pet');
     }
@@ -119,8 +119,8 @@ export const unlinkPetFromTutor = createAsyncThunk(
   'tutores/unlinkPet',
   async ({ tutorId, petId }: { tutorId: number; petId: number }, { rejectWithValue }) => {
     try {
-      await tutorService.unlinkPet(tutorId, petId);
-      return { tutorId, petId };
+      const message = await tutorService.unlinkPet(tutorId, petId);
+      return { tutorId, petId, message };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Erro ao desvincular pet');
     }
@@ -209,9 +209,9 @@ const tutorSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(deleteTutor.fulfilled, (state, action: PayloadAction<number>) => {
+      .addCase(deleteTutor.fulfilled, (state, action: PayloadAction<{ id: number; message: string }>) => {
         state.loading = false;
-        state.tutores = state.tutores.filter(t => t.id !== action.payload);
+        state.tutores = state.tutores.filter(t => t.id !== action.payload.id);
       })
       .addCase(deleteTutor.rejected, (state, action) => {
         state.loading = false;

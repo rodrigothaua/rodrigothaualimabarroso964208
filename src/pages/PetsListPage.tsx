@@ -37,15 +37,33 @@ export const PetsListPage: React.FC = () => {
         <Button onClick={() => navigate('/pets/novo')}>Cadastrar Novo Pet</Button>
       </div>
 
-      <div className="mb-6 flex gap-2">
-        <Input
-          placeholder="Buscar pet por nome..."
-          value={localSearch}
-          onChange={(e) => setLocalSearch(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-        />
-        <Button onClick={handleSearch}>Buscar</Button>
-      </div>
+      <Card className="mb-6">
+        <h2 className="text-lg font-semibold mb-4">Filtros</h2>
+        <div className="flex gap-3">
+          <div className="flex-1">
+            <Input
+              placeholder="Buscar pet por nome..."
+              value={localSearch}
+              onChange={(e) => setLocalSearch(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+            />
+          </div>
+          <Button onClick={handleSearch} className="px-10">
+            Buscar
+          </Button>
+          {searchQuery && (
+            <Button 
+              variant="secondary" 
+              onClick={() => {
+                setLocalSearch('');
+                dispatch(setSearchQuery(''));
+              }}
+            >
+              Limpar
+            </Button>
+          )}
+        </div>
+      </Card>
 
       {pets.length === 0 ? (
         <div className="text-center py-12">

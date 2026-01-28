@@ -24,8 +24,12 @@ export const login = createAsyncThunk(
   async (credentials: LoginCredentials, { rejectWithValue }) => {
     try {
       const response = await authService.login(credentials);
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('refreshToken', response.refreshToken);
+      localStorage.setItem('token', response.access_token);
+      localStorage.setItem('refreshToken', response.refresh_token);
+      console.log('✅ Tokens salvos no localStorage:', {
+        token: response.access_token,
+        refreshToken: response.refresh_token
+      });
       return response;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Falha no login');
@@ -38,8 +42,8 @@ export const refreshToken = createAsyncThunk(
   async (token: string, { rejectWithValue }) => {
     try {
       const response = await authService.refresh(token);
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('refreshToken', response.refreshToken);
+      localStorage.setItem('token', response.access_token);
+      localStorage.setItem('refreshToken', response.refresh_token);
       return response;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Falha ao renovar token');
@@ -71,8 +75,9 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (state, action: PayloadAction<AuthResponse>) => {
         state.loading = false;
         state.isAuthenticated = true;
-        state.token = action.payload.token;
-        state.refreshToken = action.payload.refreshToken;
+        state.token = action.payload.access_token;
+        state.refreshToken = action.payload.refresh_token;
+        console.log('✅ Estado atualizado - isAuthenticated:', state.isAuthenticated);
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
@@ -80,8 +85,8 @@ const authSlice = createSlice({
       })
       // Refresh
       .addCase(refreshToken.fulfilled, (state, action: PayloadAction<AuthResponse>) => {
-        state.token = action.payload.token;
-        state.refreshToken = action.payload.refreshToken;
+        state.token = action.payload.access_token;
+        state.refreshToken = action.payload.refresh_token;
       })
       .addCase(refreshToken.rejected, (state) => {
         state.isAuthenticated = false;
