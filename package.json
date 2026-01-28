@@ -8,7 +8,14 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "vitest",
+    "docker:build": "docker build -t pet-manager:latest .",
+    "docker:run": "docker run -d -p 3000:80 --name pet-manager pet-manager:latest",
+    "docker:stop": "docker stop pet-manager && docker rm pet-manager",
+    "docker:dev": "docker-compose -f docker-compose.dev.yml up -d",
+    "docker:prod": "docker-compose up -d",
+    "docker:logs": "docker-compose logs -f",
+    "docker:down": "docker-compose down"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.11.2",

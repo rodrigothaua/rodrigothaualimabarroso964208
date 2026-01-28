@@ -1,6 +1,11 @@
+version: '3.8'
+
 services:
   pet-manager:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pet-manager-frontend
     ports:
       - "3000:80"
     environment:
@@ -12,3 +17,22 @@ services:
       retries: 3
       start_period: 10s
     restart: unless-stopped
+    networks:
+      - pet-manager-network
+    labels:
+      - "com.pet-manager.description=Pet Manager Frontend"
+      - "com.pet-manager.version=1.0.0"
+    # Limites de recursos
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
+networks:
+  pet-manager-network:
+    driver: bridge
+    name: pet-manager-network

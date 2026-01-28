@@ -1,0 +1,58 @@
+# Dependências
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build outputs
+dist
+dist-ssr
+*.local
+
+# Cache e temporários
+.vite
+.cache
+*.tsbuildinfo
+
+# Testes
+coverage
+.nyc_output
+*.lcov
+
+# Ambientes
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# CI/CD
+.github
+.gitlab-ci.yml
+
+# Documentação
+*.md
+LICENSE
+
+# Logs
+logs
+*.log
