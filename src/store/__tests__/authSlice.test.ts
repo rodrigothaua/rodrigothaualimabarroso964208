@@ -4,8 +4,8 @@ import authReducer, { login, logout } from '../authSlice';
 describe('authSlice', () => {
   const initialState = {
     isAuthenticated: false,
-    token: undefined,
-    refreshToken: undefined,
+    token: null,
+    refreshToken: null,
     loading: false,
     error: null
   };
