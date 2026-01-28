@@ -23,6 +23,9 @@ Sistema web para gerenciamento de registro público de Pets e Tutores desenvolvi
 - Paginação de listagens (10 itens por página)
 - Busca por nome em tempo real com filtros dinâmicos
 - Upload e exibição de fotos para Pets e Tutores
+- Zoom de imagem na página de detalhes do Pet (clique para ampliar)
+- Ícone de lupa indicando zoom disponível ao passar o mouse
+- Modal de visualização de imagem em tela cheia
 - Vinculação e desvinculação de Pets aos Tutores
 - Validação de formulários (campos obrigatórios, email, CPF)
 - Máscaras de entrada (telefone, CPF)
@@ -38,13 +41,14 @@ Sistema web para gerenciamento de registro público de Pets e Tutores desenvolvi
 - Padrão Facade na camada de serviços
 - Redux Toolkit para gerenciamento de estado
 - Componentização e reusabilidade de código
-- 83 testes unitários com 100% de aprovação
-  - 41 testes de componentes UI
+- 83 testes unitários com 100% de aprovação (verificado em 28/01/2026)
+  - 47 testes de componentes UI (Button, Card, Input, Toast, Pagination, etc.)
   - 15 testes de serviços (authService, petService, tutorService)
-  - 22 testes de Redux slices
-  - 5 testes de hooks customizados
+  - 16 testes de Redux slices (authSlice, petSlice, tutorSlice)
+  - 5 testes de hooks customizados (useToast)
 - Código limpo sem console.log em produção
 - Commits incrementais e organizados no Git
+- Testes configurados com Vitest 4.0 e Testing Library 16.3
 
 **PRIORIDADE MÉDIA - Otimização e Performance:**
 - Lazy loading de rotas com React.lazy e Suspense
@@ -129,7 +133,8 @@ src/
 │   ├── Navbar.tsx          # Barra de navegação
 │   ├── Pagination.tsx      # Componente de paginação
 │   ├── PrivateRoute.tsx    # HOC para proteção de rotas
-│   └── Toast.tsx           # Notificações temporárias
+│   ├── Toast.tsx           # Notificações temporárias
+│   └── ImageZoom.tsx       # Modal de zoom para imagens
 │
 ├── pages/                  # Páginas da Aplicação (View Layer)
 │   ├── LoginPage.tsx       # Autenticação de usuário
