@@ -6,6 +6,8 @@ import { fetchPets } from '../store/petSlice';
 import { Button } from '../components/Button';
 import { Loading } from '../components/Loading';
 import { Card } from '../components/Card';
+import { Toast } from '../components/Toast';
+import { useToast } from '../hooks/useToast';
 
 export const TutorDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -13,6 +15,7 @@ export const TutorDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const { currentTutor, loading } = useAppSelector((state) => state.tutores);
   const { pets } = useAppSelector((state) => state.pets);
+  const { toast, showToast, hideToast } = useToast();
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [selectedPetId, setSelectedPetId] = useState<number | null>(null);
 
@@ -29,26 +32,41 @@ export const TutorDetailPage: React.FC = () => {
   const handleDelete = async () => {
     if (window.confirm('Tem certeza que deseja excluir este tutor?')) {
       if (id) {
-        await dispatch(deleteTutor(Number(id)));
-        navigate('/tutores');
+        const result = await dispatch(deleteTutor(Number(id)));
+        if (deleteTutor.fulfilled.match(result)) {
+          showToast('Tutor excluído com sucesso!', 'success');
+          setTimeout(() => navigate('/tutores'), 1500);
+        } else {
+          showToast('Erro ao excluir tutor. Tente novamente.', 'error');
+        }
       }
     }
   };
 
   const handleLinkPet = async () => {
     if (selectedPetId && id) {
-      await dispatch(linkPetToTutor({ tutorId: Number(id), petId: selectedPetId }));
+      const result = await dispatch(linkPetToTutor({ tutorId: Number(id), petId: selectedPetId }));
       setShowLinkModal(false);
       setSelectedPetId(null);
-      dispatch(fetchTutorById(Number(id)));
+      if (linkPetToTutor.fulfilled.match(result)) {
+        showToast('Pet vinculado com sucesso!', 'success');
+        dispatch(fetchTutorById(Number(id)));
+      } else {
+        showToast('Erro ao vincular pet.', 'error');
+      }
     }
   };
 
   const handleUnlinkPet = async (petId: number) => {
     if (window.confirm('Deseja desvincular este pet?')) {
       if (id) {
-        await dispatch(unlinkPetFromTutor({ tutorId: Number(id), petId }));
-        dispatch(fetchTutorById(Number(id)));
+        const result = await dispatch(unlinkPetFromTutor({ tutorId: Number(id), petId }));
+        if (unlinkPetFromTutor.fulfilled.match(result)) {
+          showToast('Pet desvinculado com sucesso!', 'success');
+          dispatch(fetchTutorById(Number(id)));
+        } else {
+          showToast('Erro ao desvincular pet.', 'error');
+        }
       }
     }
   };
@@ -63,6 +81,9 @@ export const TutorDetailPage: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {toast.show && (
+        <Toast message={toast.message} type={toast.type} onClose={hideToast} />
+      )}
       <div className="max-w-4xl mx-auto">
         <div className="mb-6">
           <Button onClick={() => navigate('/tutores')} variant="secondary">

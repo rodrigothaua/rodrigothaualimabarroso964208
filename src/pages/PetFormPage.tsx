@@ -6,12 +6,15 @@ import { createPet, updatePet, uploadPetPhoto, fetchPetById, clearCurrentPet } f
 import { Input } from '../components/Input';
 import { Button } from '../components/Button';
 import { Card } from '../components/Card';
+import { Toast } from '../components/Toast';
+import { useToast } from '../hooks/useToast';
 
 export const PetFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { currentPet, loading } = useAppSelector((state) => state.pets);
+  const { toast, showToast, hideToast } = useToast();
   
   const [nome, setNome] = useState('');
   const [raca, setRaca] = useState('');
@@ -67,14 +70,23 @@ export const PetFormPage: React.FC = () => {
         await dispatch(uploadPetPhoto({ id: petId, file: foto }));
       }
 
-      navigate(`/pets/${petId}`);
+      showToast(
+        id ? 'Pet atualizado com sucesso!' : 'Pet cadastrado com sucesso!',
+        'success'
+      );
+      
+      setTimeout(() => navigate(`/pets/${petId}`), 1500);
     } catch (error) {
       console.error('Erro ao salvar pet:', error);
+      showToast('Erro ao salvar pet. Tente novamente.', 'error');
     }
   };
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {toast.show && (
+        <Toast message={toast.message} type={toast.type} onClose={hideToast} />
+      )}
       <div className="max-w-2xl mx-auto">
         <div className="mb-6">
           <Button onClick={() => navigate(-1)} variant="secondary">

@@ -38,15 +38,20 @@ apiClient.interceptors.response.use(
         if (refreshToken) {
           const response = await axios.put(
             `${API_BASE_URL}/autenticacao/refresh`,
-            { refreshToken }
+            {},
+            {
+              headers: {
+                Authorization: `Bearer ${refreshToken}`,
+              },
+            }
           );
 
-          const { token, refreshToken: newRefreshToken } = response.data;
-          localStorage.setItem('token', token);
-          localStorage.setItem('refreshToken', newRefreshToken);
+          const { access_token, refresh_token } = response.data;
+          localStorage.setItem('token', access_token);
+          localStorage.setItem('refreshToken', refresh_token);
 
           if (originalRequest.headers) {
-            originalRequest.headers.Authorization = `Bearer ${token}`;
+            originalRequest.headers.Authorization = `Bearer ${access_token}`;
           }
 
           return apiClient(originalRequest);

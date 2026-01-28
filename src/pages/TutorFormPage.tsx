@@ -6,12 +6,15 @@ import { createTutor, updateTutor, uploadTutorPhoto, fetchTutorById, clearCurren
 import { Input } from '../components/Input';
 import { Button } from '../components/Button';
 import { Card } from '../components/Card';
+import { Toast } from '../components/Toast';
+import { useToast } from '../hooks/useToast';
 
 export const TutorFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { currentTutor, loading } = useAppSelector((state) => state.tutores);
+  const { toast, showToast, hideToast } = useToast();
   
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
@@ -86,14 +89,23 @@ export const TutorFormPage: React.FC = () => {
         await dispatch(uploadTutorPhoto({ id: tutorId, file: foto }));
       }
 
-      navigate(`/tutores/${tutorId}`);
+      showToast(
+        id ? 'Tutor atualizado com sucesso!' : 'Tutor cadastrado com sucesso!',
+        'success'
+      );
+      
+      setTimeout(() => navigate(`/tutores/${tutorId}`), 1500);
     } catch (error) {
       console.error('Erro ao salvar tutor:', error);
+      showToast('Erro ao salvar tutor. Tente novamente.', 'error');
     }
   };
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {toast.show && (
+        <Toast message={toast.message} type={toast.type} onClose={hideToast} />
+      )}
       <div className="max-w-2xl mx-auto">
         <div className="mb-6">
           <Button onClick={() => navigate(-1)} variant="secondary">
